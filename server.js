@@ -13,6 +13,17 @@ app.use(helmet());
 app.use(morgan('tiny'));
 
 app.use('/', routes);
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({
+    error: true, 
+    name: 'NotFoundError', 
+    message: `Cannot find anything in ${req.originalUrl}`
+  })
+})
+
+// error handler
 app.use((err, req, res, next) => {
   const {name, message, status = 500} = err
   res.status(status).json({error: true, name, message})
