@@ -3,6 +3,7 @@ const got = require('got')
 const unzipper = require('unzipper').ParseOne
 const srt2vtt = require('srt2vtt');
 const streamz = require('streamz');
+const langs = require('./langs.json')
 
 const uri = 'http://www.yifysubtitles.com/movie-imdb'
 const scrape = imdbId => {
@@ -11,9 +12,12 @@ const scrape = imdbId => {
   .then($ => {
     return $('tbody tr').map((i, el) => {
       const $el = $(el);
+      const langLong  = $el.find('.flag-cell .sub-lang').text().toLowerCase()
+      const langShort = langs[langLong]
       return {
         rating: $el.find('.rating-cell').text(),
-        language: $el.find('.flag-cell .sub-lang').text().toLowerCase(),
+        langLong,
+        langShort,
         url: $el.find('.download-cell a')
                 .attr('href').replace('subtitles/', 'subtitle/') + '.zip'
       };
