@@ -5,7 +5,14 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
+    "deploy": "now --public && now alias",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "now": {
+    "alias": "yify-api"
+  },
+  "engines": {
+    "node": ">=6.9"
   },
   "keywords": [],
   "author": "",
