@@ -30,13 +30,14 @@ const scrape = imdbId => {
 const convert = path => {
   const subUrl = (uri+path).replace('/movie-imdb', '')
   return new Promise((resolve, reject) => {
-    let text = ""
+    let buffers = []
     got.stream(subUrl, {encoding: null})
     .pipe(unzipper())
     .on('data', chunk => {
-      text += chunk.toString('utf8')
+      buffers.push(chunk)
     })
-    .on('end', () => {      
+    .on('end', () => {   
+      const text = Buffer.concat(buffers)   
       srt2vtt(text, (err, vtt) => {
         if(err) {
           reject(err)
