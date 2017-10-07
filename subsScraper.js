@@ -55,7 +55,7 @@ const scrapeAndConvert = (imbd_id, index) => {
 }
 const mapSubtitles = (subs) => {
   const grouped = groupBy(subs, 'langLong')
-  return grouped.map(group => ({
+  return Object.values(grouped).map(group => ({
     langLong:  group[0].langLong,
     langShort: group[0].langShort,
     subs: group
