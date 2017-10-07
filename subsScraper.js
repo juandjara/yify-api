@@ -4,6 +4,7 @@ const unzipper = require('unzipper').ParseOne
 const srt2vtt = require('srt2vtt');
 const streamz = require('streamz');
 const langs = require('./langs.json')
+const {groupBy} = require('lodash')
 
 const uri = 'http://www.yifysubtitles.com/movie-imdb'
 const scrape = imdbId => {
@@ -15,11 +16,13 @@ const scrape = imdbId => {
       const langLong  = $el.find('.flag-cell .sub-lang').text().toLowerCase()
       const langShort = langs[langLong]
       return {
+        name: $el.find('.flag-cell + td').text()
+                 .replace("subtitle ", ""),
         rating: $el.find('.rating-cell').text(),
         langLong,
         langShort,
-        url: $el.find('.download-cell a')
-                .attr('href').replace('subtitles/', 'subtitle/') + '.zip'
+        url: $el.find('.download-cell a').attr('href')
+                .replace('subtitles/', 'subtitle/') + '.zip'
       };
     }).get().map((sub, index) => ({...sub, index}))
   })
@@ -50,7 +53,16 @@ const scrapeAndConvert = (imbd_id, index) => {
   .then(movies => movies[index].url)
   .then(convert)
 }
+const mapSubtitles = (subs) => {
+  const grouped = groupBy(subs, 'langLong')
+  return grouped.map(group => ({
+    langLong:  group[0].langLong,
+    langShort: group[0].langShort,
+    subs: group
+  }))
+}
 
 exports.scrapeAndConvert = scrapeAndConvert
 exports.convert = convert
 exports.scrape  = scrape
+exports.mapSubtitles = mapSubtitles

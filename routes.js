@@ -3,7 +3,6 @@ const router = new Router();
 const YTSApi = require('yts-api-pt')
 const pkg = require('./package.json')
 const scraper = require('./subsScraper')
-const {groupBy} = require('lodash')
 
 const yts = new YTSApi()
 const startDate = new Date();
@@ -39,7 +38,7 @@ router.get('/movies/suggestions/:movieId', (req, res) => {
 })
 router.get('/subs/:imdb_id', (req, res) => {
   scraper.scrape(req.params.imdb_id)
-  .then(json => groupBy(json, 'langShort'))
+  .then(json => scraper.mapSubtitles(json))
   .then(data => res.json(data))
 })
 router.get('/subs/:imdb_id/:index', (req, res) => {
